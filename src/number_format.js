@@ -83,7 +83,7 @@ class NumberFormat extends React.Component {
     this.onKeyDown = this.onKeyDown.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onFocus = this.onFocus.bind(this);
-    this.onBlur = this.onBlur.bind(this);
+    this._onBlur = this._onBlur.bind(this);
   }
 
   componentDidMount() {
@@ -471,14 +471,8 @@ class NumberFormat extends React.Component {
    * @return {string} formatted Value
    */
   formatAsNumber(numStr: string) {
-    const {
-      decimalScale,
-      fixedDecimalScale,
-      prefix,
-      suffix,
-      allowNegative,
-      thousandsGroupStyle,
-    } = this.props;
+    const { decimalScale, fixedDecimalScale, prefix, suffix, allowNegative, thousandsGroupStyle } =
+      this.props;
     const { thousandSeparator, decimalSeparator } = this.getSeparators();
 
     const hasDecimalSeparator = numStr.indexOf('.') !== -1 || (decimalScale && fixedDecimalScale);
@@ -819,7 +813,7 @@ class NumberFormat extends React.Component {
     }
   }
 
-  onBlur(e: SyntheticInputEvent) {
+  _onBlur(e: SyntheticInputEvent) {
     const { props, state } = this;
     const { format, onBlur, allowLeadingZeros } = props;
     let { numAsString } = state;
@@ -852,11 +846,11 @@ class NumberFormat extends React.Component {
           event: e,
           source: 'event',
         });
-        onBlur(e);
+       
         return;
       }
     }
-    onBlur(e);
+   
   }
 
   onKeyDown(e: SyntheticKeyboardInputEvent) {
@@ -1038,7 +1032,7 @@ class NumberFormat extends React.Component {
       onKeyDown: this.onKeyDown,
       onMouseUp: this.onMouseUp,
       onFocus: this.onFocus,
-      onBlur: this.onBlur,
+      
     });
 
     if (displayType === 'text') {
@@ -1054,7 +1048,10 @@ class NumberFormat extends React.Component {
       return <CustomInput {...inputProps} ref={getInputRef} />;
     }
 
-    return <input {...inputProps} ref={getInputRef} />;
+    return <input {...inputProps} ref={getInputRef} onBlur={(e) => {
+      this.props.onBlur(e)
+      this._onBlur(e);
+    }} />;
   }
 }
 
